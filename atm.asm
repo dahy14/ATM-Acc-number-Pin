@@ -1,60 +1,66 @@
 include 'emu8086.inc'
 JMP START
 
-DATA SEGMENT 
+DATA SEGMENT
     TOTAL        DW 20
     IDS1         DW 0000H,0001H,0002H,0003H,0004H,0005H,0006H,0007H,0008H,0009H
     IDS2         DW 000AH,000BH,000CH,000DH,000EH,000FH,0010H,0011H,0012H,0013H 
-    PASSWORDS1   DB   00H,  01H,  02H,  03H,  04H,  05H,  06H,  07H,  08H,  09H
-    PASSWORDS2   DB   0AH,  0BH,  0CH,  0DH,  0EH,  0FH,  01H,  02H,  03H,  04H
-    DATA1        DB 'W*',0
-    DATA2        DB 0DH,0AH,'ID: ',0
-    DATA3        DB 0DH,0AH,'PW: ',0 
+    PASSWORDS1   DB 00H, 01H, 02H, 03H, 04H, 05H, 06H, 07H, 08H, 09H
+    PASSWORDS2   DB 0AH, 0BH, 0CH, 0DH, 0EH, 0FH, 01H, 02H, 03H, 04H
+    DATA1        DB '******WELCOME*******',0
+    DATA2        DB 0DH,0AH,'ENTER YOUR ID: ',0
+    DATA3        DB 0DH,0AH,'ENTER YOUR PASSWORD: ',0 
     DATA4        DB 0DH,0AH,'DENIED 0  ',0  
     DATA5        DB 0DH,0AH,'ALLOWED 1 ',0 
-    DATA6        DB '**',0 
+    DATA6        DB '**',0
     DATA7        DB '*',0
-    DATA8        DB 0DH,0AH,'Enter withdrawal amount: ',0 
-    DATA9        DB 0DH,0AH,'You entered: ',0             
-    DATA10       DB '.00',0                 
-    DATA11       DB 0DH,0AH,'Transaction complete.',0    
-    WITHDRAWAL   DW 1 DUP (?)               ; Storage for withdrawal amount
+    DATA8        DB 0DH,0AH,'Enter amount to deposit: ',0
+    DATA9        DB 0DH,0AH,'Enter amount to withdraw: ',0
+    DATA10       DB '.00',0
+    DATA11       DB 0DH,0AH,'Transaction complete.',0
+    DATA12       DB 0DH,0AH,'Insufficient funds.',0
+    BALANCE_MSG  DB 0DH,0AH,'Current balance: ',0
     IDINPUT      DW 1 DUP (?)
-    PASSINPUT    DB 1 DUP (?)  
+    PASSINPUT    DB 1 DUP (?)
     CXINPUT      DB 1 DUP (?)
+    BALANCE      DW 0                      ; Initial balance
+
 DATA ENDS
 
 CODE SEGMENT
 
-START:MOV  AX,DATA
-      MOV  DS,AX  
+START:
+    MOV  AX, DATA
+    MOV  DS, AX
 
-DEFINE_SCAN_NUM           
-DEFINE_PRINT_STRING 
+DEFINE_SCAN_NUM
+DEFINE_PRINT_STRING
 DEFINE_PRINT_NUM
-DEFINE_PRINT_NUM_UNS 
+DEFINE_PRINT_NUM_UNS
 
-AGAIN:LEA  SI,DATA1
-      CALL PRINT_STRING
-      LEA  SI,DATA2
-      CALL PRINT_STRING
-      MOV  SI,-1
+AGAIN:
+    LEA  SI, DATA1
+    CALL PRINT_STRING
+    LEA  SI, DATA2
+    CALL PRINT_STRING
+    MOV  SI, -1
 
-      CALL SCAN_NUM
-      MOV  IDINPUT,CX
-      MOV  AX,CX
-      MOV  CX,0 
-L1:   INC  CX
-      CMP  CX,TOTAL
-      JE   ERROR
-      INC  SI
-      MOV  DX,SI
-      CMP  IDS1[SI],AX
-      JE   PASS1
-      CMP  IDS2[SI],AX
-      JE   PASS2
-      JMP  L1
-      
+    CALL SCAN_NUM
+    MOV  IDINPUT, CX
+    MOV  AX, CX
+    MOV  CX, 0
+L1:
+    INC  CX
+    CMP  CX, TOTAL
+    JE   ERROR
+    INC  SI
+    MOV  DX, SI
+    CMP  IDS1[SI], AX
+    JE   PASS1
+    CMP  IDS2[SI], AX
+    JE   PASS2
+    JMP  L1
+
 SCAN_NUM_MASKED PROC
     PUSH    AX
     PUSH    BX
@@ -121,7 +127,7 @@ backspace:
     DIV     DI               ; AX = CX / 10, DX = CX % 10
     MOV     CX, AX
     JMP     next_digit
-
+    
 input_done:
     MOV     CXINPUT, CL      ; Store the result in CXINPUT
 
@@ -134,71 +140,97 @@ input_done:
     RET
 SCAN_NUM_MASKED ENDP
 
-PASS1:LEA  SI,DATA3
-      CALL PRINT_STRING        
-      CALL SCAN_NUM_MASKED
-      MOV  BL, CXINPUT
-      MOV  PASSINPUT, BL
-      MOV  AX,DX 
-      MOV  DX,0002H
-      DIV  DL 
-      MOV  SI,AX 
-      MOV  AL,PASSINPUT
-      MOV  AH,00H
-      CMP  PASSWORDS1[SI],AL
-      JNE  ERROR
-      JMP  WDRAW
+PASS1:
+    LEA  SI, DATA3
+    CALL PRINT_STRING        
+    CALL SCAN_NUM_MASKED
+    MOV  BL, CXINPUT
+    MOV  PASSINPUT, BL
+    MOV  AX, DX 
+    MOV  DX, 0002H
+    DIV  DL 
+    MOV  SI, AX 
+    MOV  AL, PASSINPUT
+    MOV  AH, 00H
+    CMP  PASSWORDS1[SI], AL
+    JNE  ERROR
+    JMP  ACCESS_GRANTED
 
-PASS2:LEA  SI,DATA3
-      CALL PRINT_STRING        
-      CALL SCAN_NUM_MASKED
-      MOV  BL, CXINPUT
-      MOV  PASSINPUT, BL
-      MOV  AX,DX 
-      MOV  DX,0002H
-      DIV  DL 
-      MOV  SI,AX 
-      MOV  AL,PASSINPUT
-      MOV  AH,00H
-      CMP  PASSWORDS2[SI],AL
-      JNE  ERROR
-      JMP  WDRAW
+PASS2:
+    LEA  SI, DATA3
+    CALL PRINT_STRING        
+    CALL SCAN_NUM_MASKED
+    MOV  BL, CXINPUT
+    MOV  PASSINPUT, BL
+    MOV  AX, DX 
+    MOV  DX, 0002H
+    DIV  DL 
+    MOV  SI, AX 
+    MOV  AL, PASSINPUT
+    MOV  AH, 00H
+    CMP  PASSWORDS2[SI], AL
+    JNE  ERROR
+    JMP  ACCESS_GRANTED
 
-WDRAW:; Code for withdrawal amount
-      ; WHO YOU KAYO SI SARAH MAY GAWA NETONG PART NA TO
-      LEA  SI, DATA8
-      CALL PRINT_STRING             
-      CALL SCAN_NUM                 
-      MOV  WITHDRAWAL, CX           
-      LEA  SI, DATA9
-      CALL PRINT_STRING             
-      MOV  AX, WITHDRAWAL
-      CALL PRINT_NUM_UNS            
-      LEA  SI, DATA10
-      CALL PRINT_STRING             
-      LEA  SI, DATA11
-      CALL PRINT_STRING
-      JMP DONE
-      
+ERROR:
+    LEA  SI, DATA4
+    CALL PRINT_STRING 
+    PRINT 0AH      
+    PRINT 0DH
+    MOV  SI, 0
+    JMP  AGAIN
 
+ACCESS_GRANTED:
+    LEA  SI, DATA5
+    CALL PRINT_STRING             
+    PRINT 0AH
+    PRINT 0DH
+    LEA  SI, DATA6
+    CALL PRINT_STRING             
 
-ERROR:LEA  SI,DATA4
-      CALL PRINT_STRING 
-      PRINT 0AH      
-      PRINT 0DH
-      MOV  SI,0
-      JMP  AGAIN
+    ; Code for depositing money
+    LEA  SI, DATA8
+    CALL PRINT_STRING             
+    CALL SCAN_NUM                 
+    MOV  AX, CX                 
+    ADD  BALANCE, AX            ; Add the deposit amount to the balance
 
-DONE: LEA  SI, DATA5
-      CALL PRINT_STRING             
-      PRINT 0AH
-      PRINT 0DH
-      LEA  SI, DATA6
-      CALL PRINT_STRING             
+    ; Display current balance
+    LEA  SI, BALANCE_MSG
+    CALL PRINT_STRING
+    MOV  AX, BALANCE
+    CALL PRINT_NUM_UNS
+    LEA  SI, DATA10
+    CALL PRINT_STRING
 
-                   
+    ; Code for withdrawal amount
+    LEA  SI, DATA9
+    CALL PRINT_STRING             
+    CALL SCAN_NUM                 
+    MOV  AX, CX                 
+    CMP  AX, BALANCE            ; Compare withdrawal amount with balance
+    JA   INSUFFICIENT_FUNDS     ; If withdrawal amount is greater, jump to error message
+    SUB  BALANCE, AX            ; Subtract the withdrawal amount from the balance
 
-      MOV  SI, 0      
+    ; Display current balance after withdrawal
+    LEA  SI, BALANCE_MSG
+    CALL PRINT_STRING
+    MOV  AX, BALANCE
+    CALL PRINT_NUM_UNS
+    LEA  SI, DATA10
+    CALL PRINT_STRING
+
+    ; Print transaction complete message
+    LEA  SI, DATA11
+    CALL PRINT_STRING
+    JMP  END_PROGRAM
+
+INSUFFICIENT_FUNDS:
+    LEA  SI, DATA12
+    CALL PRINT_STRING            ; Print insufficient funds message
+
+END_PROGRAM:
+    MOV  SI, 0      
       
 CODE ENDS
 
