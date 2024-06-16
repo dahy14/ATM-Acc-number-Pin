@@ -1,30 +1,28 @@
-include 'emu8086.inc'
+include 'emu8086.inc' 
+ 
 JMP START
 
-DATA SEGMENT
+DATA SEGMENT 
+    include database.asm
     TOTAL        DW 20
-    IDS1         DW 0000H,0001H,0002H,0003H,0004H,0005H,0006H,0007H,0008H,0009H
-    IDS2         DW 000AH,000BH,000CH,000DH,000EH,000FH,0010H,0011H,0012H,0013H 
-    PASSWORDS1   DB 00H, 01H, 02H, 03H, 04H, 05H, 06H, 07H, 08H, 09H
-    PASSWORDS2   DB 0AH, 0BH, 0CH, 0DH, 0EH, 0FH, 01H, 02H, 03H, 04H
     DATA1        DB 'W*',0
     DATA2        DB 0DH,0AH,'ID: ',0
     DATA3        DB 0DH,0AH,'PW: ',0
-    DATA4        DB 0DH,0AH,'DENIED 0  ',0
-    DATA5        DB 0DH,0AH,'ALLOWED 1 ',0
-    DATA6        DB '**',0
+    DATA4        DB 0DH,0AH,'d',0
+    DATA5        DB 0DH,0AH,'a',0
+    DATA6        DB '*',0
     DATA7        DB '*',0
     DATA8        DB 0DH,0AH,'Enter amount to deposit: ',0
     DATA9        DB 0DH,0AH,'Enter amount to withdraw: ',0
     DATA10       DB '.00',0
     DATA11       DB 0DH,0AH,'Transaction complete.',0
     DATA12       DB 0DH,0AH,'Insufficient funds.',0
-    BALANCE_MSG  DB 0DH,0AH,'Current balance: ',0
+    BALANCE_MSG  DB 0DH,0AH,'cb: ',0
     IDINPUT      DW 1 DUP (?)
     PASSINPUT    DB 1 DUP (?)
     CXINPUT      DB 1 DUP (?)
-    BALANCE      DW 0                      ; Initial balance
 
+    BALANCE      DW 0                      ; Initial balance
 DATA ENDS
 
 CODE SEGMENT
@@ -140,6 +138,11 @@ input_done:
     RET
 SCAN_NUM_MASKED ENDP
 
+ADD_BAL PROC
+   MOV  BALANCE, AX
+   JMP  ACCESS_GRANTED 
+   RET
+ADD_BAL ENDP
 PASS1:
     LEA  SI, DATA3
     CALL PRINT_STRING        
@@ -153,8 +156,88 @@ PASS1:
     MOV  AL, PASSINPUT
     MOV  AH, 00H
     CMP  PASSWORDS1[SI], AL
-    JNE  ERROR
-    JMP  ACCESS_GRANTED
+    JNE  ERROR  
+    
+    CMP SI, 0
+    JE  ZERO_PASS
+    
+    CMP SI, 1 
+    JE  ONE_PASS 
+    
+    CMP SI, 2 
+    JE  TWO_PASS
+    
+    CMP SI, 3 
+    JE  THREE_PASS
+    
+    CMP SI, 4
+    JE FOUR_PASS
+
+    CMP SI, 5
+    JE FIVE_PASS
+
+    CMP SI, 6
+    JE SIX_PASS
+
+    CMP SI, 7
+    JE SEVEN_PASS
+
+    CMP SI, 8
+    JE EIGHT_PASS
+
+    CMP SI, 9
+    JE NINE_PASS
+ZERO_PASS:               
+       ; Load proper money amount
+    MOV AH, MONEY1[0]
+    MOV AL, MONEY1[1]
+    CALL ADD_BAL
+    
+ONE_PASS: 
+    MOV AH, MONEY1[2]
+    MOV AL, MONEY1[3]
+    CALL ADD_BAL 
+
+TWO_PASS: 
+    MOV AH, MONEY1[4]
+    MOV AL, MONEY1[5]
+    CALL ADD_BAL
+
+THREE_PASS: 
+    MOV AH, MONEY1[6]
+    MOV AL, MONEY1[7]
+    CALL ADD_BAL
+
+FOUR_PASS:
+    MOV AH, MONEY1[8]
+    MOV AL, MONEY1[9]
+    CALL ADD_BAL
+
+FIVE_PASS:
+    MOV AH, MONEY1[10]
+    MOV AL, MONEY1[11]
+    CALL ADD_BAL
+
+SIX_PASS:
+    MOV AH, MONEY1[12]
+    MOV AL, MONEY1[13]
+    CALL ADD_BAL
+
+SEVEN_PASS:
+    MOV AH, MONEY1[14]
+    MOV AL, MONEY1[15]
+    CALL ADD_BAL
+
+EIGHT_PASS:
+    MOV AH, MONEY1[16]
+    MOV AL, MONEY1[17]
+    CALL ADD_BAL
+
+NINE_PASS:
+    MOV AH, MONEY1[18]
+    MOV AL, MONEY1[19]
+    CALL ADD_BAL
+
 
 PASS2:
     LEA  SI, DATA3
@@ -170,7 +253,87 @@ PASS2:
     MOV  AH, 00H
     CMP  PASSWORDS2[SI], AL
     JNE  ERROR
-    JMP  ACCESS_GRANTED
+    
+    CMP SI, 0
+    JE  ZERO_PASS2
+    
+    CMP SI, 1 
+    JE  ONE_PASS2 
+    
+    CMP SI, 2 
+    JE  TWO_PASS2
+    
+    CMP SI, 3 
+    JE  THREE_PASS2
+    
+    CMP SI, 4
+    JE FOUR_PASS2
+
+    CMP SI, 5
+    JE FIVE_PASS2
+
+    CMP SI, 6
+    JE SIX_PASS2
+
+    CMP SI, 7
+    JE SEVEN_PASS2
+
+    CMP SI, 8
+    JE EIGHT_PASS2
+
+    CMP SI, 9
+    JE NINE_PASS2
+
+ZERO_PASS2:              
+       ; Load proper money amount
+    MOV AH, MONEY2[0]
+    MOV AL, MONEY2[1]
+    CALL ADD_BAL
+
+ONE_PASS2:
+    MOV AH, MONEY2[2]
+    MOV AL, MONEY2[3]
+    CALL ADD_BAL
+
+TWO_PASS2:
+    MOV AH, MONEY2[4]
+    MOV AL, MONEY2[5]
+    CALL ADD_BAL
+
+THREE_PASS2:
+    MOV AH, MONEY2[6]
+    MOV AL, MONEY2[7]
+    CALL ADD_BAL
+
+FOUR_PASS2:
+    MOV AH, MONEY2[8]
+    MOV AL, MONEY2[9]
+    CALL ADD_BAL
+
+FIVE_PASS2:
+    MOV AH, MONEY2[10]
+    MOV AL, MONEY2[11]
+    CALL ADD_BAL
+
+SIX_PASS2:
+    MOV AH, MONEY2[12]
+    MOV AL, MONEY2[13]
+    CALL ADD_BAL
+
+SEVEN_PASS2:
+    MOV AH, MONEY2[14]
+    MOV AL, MONEY2[15]
+    CALL ADD_BAL
+
+EIGHT_PASS2:
+    MOV AH, MONEY2[16]
+    MOV AL, MONEY2[17]
+    CALL ADD_BAL
+
+NINE_PASS2:
+    MOV AH, MONEY2[18]
+    MOV AL, MONEY2[19]
+    CALL ADD_BAL
 
 ERROR:
     LEA  SI, DATA4
@@ -178,31 +341,36 @@ ERROR:
     PRINT 0AH      
     PRINT 0DH
     MOV  SI, 0
-    JMP  AGAIN
+    JMP  AGAIN    
 
-ACCESS_GRANTED:
+    
+
+ACCESS_GRANTED: 
+    
+    ; Code for depositing money
+    ; LEA  SI, DATA8
+    ; CALL PRINT_STRING             
+    ; CALL SCAN_NUM                 
+    ; MOV  AX, CX                 
+    ; ADD  BALANCE, AX            ; Add the deposit amount to the balance
+
+
     LEA  SI, DATA5
     CALL PRINT_STRING             
     PRINT 0AH
     PRINT 0DH
     LEA  SI, DATA6
-    CALL PRINT_STRING             
-
-    ; Code for depositing money
-    LEA  SI, DATA8
-    CALL PRINT_STRING             
-    CALL SCAN_NUM                 
-    MOV  AX, CX                 
-    ADD  BALANCE, AX            ; Add the deposit amount to the balance
-
+    CALL PRINT_STRING      
+    
     ; Display current balance
     LEA  SI, BALANCE_MSG
     CALL PRINT_STRING
-    MOV  AX, BALANCE
+    LEA  SI, BALANCE
     CALL PRINT_NUM_UNS
-    LEA  SI, DATA10
+    LEA  SI, DATA10               ; place decimal
     CALL PRINT_STRING
-
+    
+    
     ; Code for withdrawal amount
     LEA  SI, DATA9
     CALL PRINT_STRING             
