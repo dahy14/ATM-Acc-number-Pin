@@ -5,11 +5,11 @@ JMP START
 DATA SEGMENT 
     include database.asm
     TOTAL        DW 20
-    DATA1        DB 'W*',0
-    DATA2        DB 0DH,0AH,'ID: ',0
-    DATA3        DB 0DH,0AH,'PW: ',0
-    DATA4        DB 0DH,0AH,'d',0
-    DATA5        DB 0DH,0AH,'a',0
+    DATA1        DB '******WELCOME*******',0
+    DATA2        DB 0DH,0AH,'ENTER YOUR ID: ',0
+    DATA3        DB 0DH,0AH,'ENTER YOUR PIN: ',0
+    DATA4        DB 0DH,0AH,'DENIED',0
+    DATA5        DB 0DH,0AH,'ALLOWED',0
     DATA6        DB '*',0
     DATA7        DB '*',0
     DATA8        DB 0DH,0AH,'Enter amount to deposit: ',0
@@ -17,7 +17,7 @@ DATA SEGMENT
     DATA10       DB '.00',0
     DATA11       DB 0DH,0AH,'Transaction complete.',0
     DATA12       DB 0DH,0AH,'Insufficient funds.',0
-    BALANCE_MSG  DB 0DH,0AH,'cb: ',0
+    BALANCE_MSG  DB 0DH,0AH,'Current Balance: ',0
     IDINPUT      DW 1 DUP (?)
     PASSINPUT    DB 1 DUP (?)
     CXINPUT      DB 1 DUP (?)
