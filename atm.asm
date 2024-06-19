@@ -2,48 +2,90 @@ include 'emu8086.inc'
 
 JMP START
 
+                                          
 DATA SEGMENT 
     include database.asm
     TOTAL        DW 20
-    DATA1        DB 0DH,0AH,'+------------------------------+',0DH,0AH 
-                 DB '|                              |',0DH,0AH
-                 DB '|         ATM MACHINE          |',0DH,0AH
-                 DB '|                              |',0 
-    DATA2        DB 0DH,0AH,'+------------------------------+',0DH,0AH
-                 DB ' ENTER YOUR ID: ',0
-    DATA3        DB 0DH,0AH,' ENTER YOUR PIN: ',0 
-    DATA4        DB 0DH,0AH,' DENIED',0DH,0AH
-                 DB '+------------------------------+',0
-    DATA5        DB 0DH,0AH,' ALLOWED',0DH,0AH
-                 DB '+------------------------------+',0
+    DATA1        DB 0DH,0AH,'       __      __   _                    _',0DH,0AH       
+                 DB '       \ \    / /__| |__ ___ _ __  ___  | |_ ___  ',0DH,0AH
+                 DB '        \ \/\/ / -_) / _/ _ \ `  \/ -_) |  _/ _ \ ',0DH,0AH
+                 DB '         \_/\_/\___|_\__\___/_|_|_\___|  \__\___/ ',0DH,0AH
+                 DB '              ______   ________  __       __ ',0DH,0AH         
+                 DB '             /      \ /        |/  \     /  |',0DH,0AH
+                 DB '            /$$$$$$  |$$$$$$$$/ $$  \   /$$ |',0DH,0AH
+                 DB '            $$ |__$$ |   $$ |   $$$  \ /$$$ |',0DH,0AH
+                 DB '            $$    $$ |   $$ |   $$$$  /$$$$ |',0DH,0AH
+                 DB '            $$$$$$$$ |   $$ |   $$ $$ $$/$$ |',0DH,0AH
+                 DB '            $$ |  $$ |   $$ |   $$ |$$$/ $$ |',0DH,0AH
+                 DB '            $$ |  $$ |   $$ |   $$ | $/  $$ |',0DH,0AH
+                 DB '            $$/   $$/    $$/    $$/      $$/ ',0DH,0AH
+                 DB '                                            ',0       
+                                
+                                
+
+    DATA2        DB 0DH,0AH,'+-------------------------------------------------------+',0DH,0AH
+                 DB '                  ___________________ ',0DH,0AH
+                 DB '                 |  _______________  |',0DH,0AH
+                 DB '                 | |               | |',0DH,0AH  
+                 DB '                 | | ENTER YOUR ID | |',0DH,0AH  
+                 DB '                 | |_______________| |',0DH,0AH
+                 DB '                 |___________________|',0DH,0AH
+                 DB '',0DH,0AH
+                 DB '                  : ',0
+    DATA3        DB 0DH,0AH,'                _______________________',0DH,0AH         
+                 DB '               |  ___________________  |',0DH,0AH
+                 DB '               | |                   | |',0DH,0AH  
+                 DB '               | |   ENTER YOUR PIN  | |',0DH,0AH  
+                 DB '               | |___________________| |',0DH,0AH
+                 DB '               |_______________________| ',0DH,0AH
+                 DB '',0DH,0AH                
+                 DB '                  : ',0
+    DATA4        DB 0DH,0AH,'',0DH,0AH
+                 DB '                         DENIED',0
+    DATA5        DB 0DH,0AH,'',0DH,0AH
+                 DB '                        ALLOWED',0
     DATA6        DB '',0
     DATA7        DB '',0
-    DATA8        DB 0DH,0AH,'+------------------------------+',0DH,0AH
-                 DB ' Enter amount to deposit:',0DH,0AH
-                 DB '+------------------------------+',0
-    DATA9        DB 0DH,0AH,' Enter amount to withdraw: ',0
+    DATA8        DB 0DH,0AH,'+-------------------------------------------------------+',0DH,0AH
+                 DB ' Enter amount to deposit:',0
+    DATA9        DB 0DH,0AH,'             ______________________________ ',0DH,0AH
+                 DB '            |  __________________________  |',0DH,0AH 
+                 DB '            | |                          | |',0DH,0AH  
+                 DB '            | | ENTER AMOUNT TO WITHDRAW | |',0DH,0AH  
+                 DB '            | |__________________________| |',0DH,0AH
+                 DB '            |______________________________|',0DH,0AH     
+                 DB '',0DH,0AH
+                 DB '               : ',0                           
     DATA10       DB '.00',0
-    DATA11       DB 0DH,0AH,' Transaction complete.',0DH,0AH
-                 DB '+------------------------------+',0DH,0AH
-                 DB '|                              |',0DH,0AH
-                 DB '|          THANK YOU           |',0DH,0AH
-                 DB '|                              |',0DH,0AH
-                 DB '+------------------------------+',0 
-    DATA12       DB 0DH,0AH,'+------------------------------+',0DH,0AH
-                 DB ' Insufficient funds.',0DH,0AH
-                 DB '+------------------------------+',0DH,0AH
-                 DB '|                              |',0DH,0AH
-                 DB '|          THANK YOU           |',0DH,0AH
-                 DB '|                              |',0DH,0AH
-                 DB '+------------------------------+',0 
-    BALANCE_MSG  DB 0DH,0AH,'+------------------------------+',0DH,0AH
-                 DB ' Current Balance: ',0
+    DATA11       DB 0DH,0AH,'              ____________________________',0DH,0AH   
+                 DB '             |  ________________________  |',0DH,0AH   
+                 DB '             | |                        | |',0DH,0AH     
+                 DB '             | |  TRANSACTION COMPLETE. | |',0DH,0AH   
+                 DB '             | |      THANK YOU!        | |',0DH,0AH     
+                 DB '             | |________________________| |',0DH,0AH   
+                 DB '             |____________________________|',0   
+    DATA12       DB 0DH,0AH,'             ______________________________',0DH,0AH     
+                 DB '            |  __________________________  |',0DH,0AH   
+                 DB '            | |                          | |',0DH,0AH     
+                 DB '            | |    INSUFFICIENT FUNDS    | |',0DH,0AH   
+                 DB '            | |  PLEASE TRY AGAIN LATER. | |',0DH,0AH     
+                 DB '            | |__________________________| |',0DH,0AH   
+                 DB '            |______________________________|',0  
+    BALANCE_MSG  DB 0DH,0AH,'+-------------------------------------------------------+',0DH,0AH                 
+                 DB '                 _____________________ ',0DH,0AH         
+                 DB '                |  _________________  |',0DH,0AH
+                 DB '                | |                 | |',0DH,0AH  
+                 DB '                | | CURRENT BALANCE | |',0DH,0AH  
+                 DB '                | |_________________| |',0DH,0AH
+                 DB '                |_____________________|',0DH,0AH
+                 DB '',0DH,0AH
+                 DB '                   : ',0
     IDINPUT      DW 1 DUP (?)
     PASSINPUT    DB 1 DUP (?)
     CXINPUT      DB 1 DUP (?)
     BALANCE      DW 0                      ; Initial balance
 DATA ENDS
-
+                
 CODE SEGMENT
 
 START:
