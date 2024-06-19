@@ -1,27 +1,46 @@
 include 'emu8086.inc' 
- 
+
 JMP START
 
 DATA SEGMENT 
     include database.asm
     TOTAL        DW 20
-    DATA1        DB '******WELCOME*******',0
-    DATA2        DB 0DH,0AH,'ENTER YOUR ID: ',0
-    DATA3        DB 0DH,0AH,'ENTER YOUR PIN: ',0
-    DATA4        DB 0DH,0AH,'DENIED',0
-    DATA5        DB 0DH,0AH,'ALLOWED',0
-    DATA6        DB '*',0
-    DATA7        DB '*',0
-    DATA8        DB 0DH,0AH,'Enter amount to deposit: ',0
-    DATA9        DB 0DH,0AH,'Enter amount to withdraw: ',0
+    DATA1        DB 0DH,0AH,'+------------------------------+',0DH,0AH 
+                 DB '|                              |',0DH,0AH
+                 DB '|         ATM MACHINE          |',0DH,0AH
+                 DB '|                              |',0 
+    DATA2        DB 0DH,0AH,'+------------------------------+',0DH,0AH
+                 DB ' ENTER YOUR ID: ',0
+    DATA3        DB 0DH,0AH,' ENTER YOUR PIN: ',0 
+    DATA4        DB 0DH,0AH,' DENIED',0DH,0AH
+                 DB '+------------------------------+',0
+    DATA5        DB 0DH,0AH,' ALLOWED',0DH,0AH
+                 DB '+------------------------------+',0
+    DATA6        DB '',0
+    DATA7        DB '',0
+    DATA8        DB 0DH,0AH,'+------------------------------+',0DH,0AH
+                 DB ' Enter amount to deposit:',0DH,0AH
+                 DB '+------------------------------+',0
+    DATA9        DB 0DH,0AH,' Enter amount to withdraw: ',0
     DATA10       DB '.00',0
-    DATA11       DB 0DH,0AH,'Transaction complete.',0
-    DATA12       DB 0DH,0AH,'Insufficient funds.',0
-    BALANCE_MSG  DB 0DH,0AH,'Current Balance: ',0
+    DATA11       DB 0DH,0AH,' Transaction complete.',0DH,0AH
+                 DB '+------------------------------+',0DH,0AH
+                 DB '|                              |',0DH,0AH
+                 DB '|          THANK YOU           |',0DH,0AH
+                 DB '|                              |',0DH,0AH
+                 DB '+------------------------------+',0 
+    DATA12       DB 0DH,0AH,'+------------------------------+',0DH,0AH
+                 DB ' Insufficient funds.',0DH,0AH
+                 DB '+------------------------------+',0DH,0AH
+                 DB '|                              |',0DH,0AH
+                 DB '|          THANK YOU           |',0DH,0AH
+                 DB '|                              |',0DH,0AH
+                 DB '+------------------------------+',0 
+    BALANCE_MSG  DB 0DH,0AH,'+------------------------------+',0DH,0AH
+                 DB ' Current Balance: ',0
     IDINPUT      DW 1 DUP (?)
     PASSINPUT    DB 1 DUP (?)
     CXINPUT      DB 1 DUP (?)
-
     BALANCE      DW 0                      ; Initial balance
 DATA ENDS
 
@@ -343,25 +362,14 @@ ERROR:
     MOV  SI, 0
     JMP  AGAIN    
 
-    
-
 ACCESS_GRANTED: 
-    
-    ; Code for depositing money
-    ; LEA  SI, DATA8
-    ; CALL PRINT_STRING             
-    ; CALL SCAN_NUM                 
-    ; MOV  AX, CX                 
-    ; ADD  BALANCE, AX            ; Add the deposit amount to the balance
-
-
     LEA  SI, DATA5
     CALL PRINT_STRING             
     PRINT 0AH
     PRINT 0DH
     LEA  SI, DATA6
     CALL PRINT_STRING      
-    
+
     ; Display current balance
     LEA  SI, BALANCE_MSG
     CALL PRINT_STRING
@@ -369,8 +377,7 @@ ACCESS_GRANTED:
     CALL PRINT_NUM_UNS
     LEA  SI, DATA10               ; place decimal
     CALL PRINT_STRING
-    
-    
+
     ; Code for withdrawal amount
     LEA  SI, DATA9
     CALL PRINT_STRING             
